@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoops Riddle Challenge</title>
+    <style>
+        :root {
+            --hoops-orange: #ff6b00;
+            --court-dark: #121212;
+            --hardwood: #1f1f1f;
+            --white: #ffffff;
+            --error: #ef4444;
+            --success: #22c55e;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--court-dark);
+            color: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #game-container {
+            background-color: var(--hardwood);
+            padding: 2.5rem;
+            border-radius: 15px;
+            border-top: 5px solid var(--hoops-orange);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h1 {
+            color: var(--hoops-orange);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 0;
+        }
+
+        .riddle-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        button {
+            background-color: transparent;
+            border: 2px solid var(--hoops-orange);
+            color: var(--white);
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: var(--hoops-orange);
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            border-color: #444;
+            color: #777;
+            cursor: not-allowed;
+        }
+
+        #result-message {
+            margin-top: 1.5rem;
+            font-weight: bold;
+            font-size: 1.3rem;
+            min-height: 40px;
+        }
+
+        .fail { color: var(--error); }
+        .win { color: var(--success); }
+
+        .action-btn {
+            margin-top: 20px;
+            background-color: var(--hoops-orange);
+            width: 100%;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <h1>Hoops Riddle</h1>
+        <div class="riddle-text" id="riddle-box">Loading riddle...</div>
+        
+        <div class="options-grid" id="options-box">
+            </div>
+
+        <div id="result-message"></div>
+        
+        <button id="next-btn" class="action-btn" onclick="loadNewRiddle()">Next Riddle 🏀</button>
+        <button id="retry-btn" class="action-btn" style="background-color: #444;" onclick="loadNewRiddle()">Try a Different One</button>
+    </div>
+
+    <script>
+        // The Riddle Database
+        const riddleLibrary = [
+            {
+                q: "I have a net but no fish. I have a court but no judge. I have a rim but no tire. What am I?",
+                options: ["Tennis Racket", "Basketball Hoop", "Soccer Goal", "Fishing Boat"],
+                correct: "Basketball Hoop"
+            },
+            {
+                q: "I am orange and round, I have black lines all over. I love to bounce. What am I?",
+                options: ["An Orange", "A Tiger", "A Basketball", "A Beach Ball"],
+                correct: "A Basketball"
+            },
+            {
+                q: "I wear a jersey but never go to school. I run all day but never leave the court. What am I?",
+                options: ["A Referee", "A Player", "A Coach", "A Water Bottle"],
+                correct: "A Player"
+            },
+            {
+                q: "I am a shot that is worth three points, but I am taken from far away. What am I?",
+                options: ["A Layup", "A Slam Dunk", "A Free Throw", "A Three-Pointer"],
+                correct: "A Three-Pointer"
+            },
+            {
+                q: "I whistle when someone is bad, but I have no mouth. What am I?",
+                options: ["A Teapot", "A Referee's Whistle", "The Wind", "A Train"],
+                correct: "A Referee's Whistle"
+            }
+        ];
+
+        let currentRiddle = {};
+
+        function loadNewRiddle() {
+            // Reset UI
+            document.getElementById('result-message').textContent = "";
+            document.getElementById('next-btn').style.display = "none";
+            document.getElementById('retry-btn').style.display = "none";
+            
+            // Pick a random riddle
+            const randomIndex = Math.floor(Math.random() * riddleLibrary.length);
+            currentRiddle = riddleLibrary[randomIndex];
+
+            // Display Question
+            document.getElementById('riddle-box').textContent = currentRiddle.q;
+
+            // Generate Buttons
+            const optionsBox = document.getElementById('options-box');
+            optionsBox.innerHTML = ""; // Clear old buttons
+
+            currentRiddle.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(option, btn);
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected, btnElement) {
+            const allButtons = document.querySelectorAll('#options-box button');
+            const resultDisplay = document.getElementById('result-message');
+            
+            // Disable all buttons
+            allButtons.forEach(btn => btn.disabled = true);
+
+            if (selected === currentRiddle.correct) {
+                resultDisplay.textContent = "🏆 SWISH! Correct!";
+                resultDisplay.className = "win";
+                document.getElementById('next-btn').style.display = "block";
+                btnElement.style.backgroundColor = "var(--success)";
+                btnElement.style.borderColor = "var(--success)";
+            } else {
+                resultDisplay.textContent = "❌ AIRBALL! You failed.";
+                resultDisplay.className = "fail";
+                document.getElementById('retry-btn').style.display = "block";
+                btnElement.style.backgroundColor = "var(--error)";
+                btnElement.style.borderColor = "var(--error)";
+            }
+        }
+
+        // Initialize the first game
+        loadNewRiddle();
+    </script>
+    <br><br><br><br>
+<a href="../startbootstrap-clean-blog-gh-pages/startbootstrap-clean-blog-gh-pages/professional.html">Professional Page</a>
+</body>
+</html>
