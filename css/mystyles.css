@@ -1,0 +1,51 @@
+body{
+background-color: rgb(222, 214, 214);
+font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif
+}
+
+h1{
+  color: blue;
+}
+
+.class1{
+  text-decoration:underline;
+}
+
+.class2{
+  font-style:italic;
+}
+
+#top{
+    text-decoration: underline;
+}
+
+.div1{
+  text-align: center;
+}
+
+.footer{
+  
+}
+
+ul, ol {
+  list-style-position: inside;
+  text-align: center;
+}
+
+/* This will make the image fill 50% of its container's width */
+.my-image {
+  width: 50%;
+  height: auto; /* This keeps the proportions correct */
+}
+
+/* Or use specific pixels */
+.my-image {
+  width: 800px;
+  height: auto;
+}
+
+.video-container {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically (if the div has a height) */
+}
